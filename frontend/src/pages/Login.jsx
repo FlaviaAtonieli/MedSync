@@ -40,13 +40,7 @@ export default function Login() {
             }
 
             localStorage.setItem('token', data.token);
-
-            // ===================================================================
-            // ESTA É A LINHA CRUCIAL QUE FALTAVA
-            // Força o sistema a buscar todos os dados com o novo token
-            // ANTES de ir para a próxima página.
             await carregarDadosCompletos(); 
-            // ===================================================================
             
             navigate('/gerenciamento');
 

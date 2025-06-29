@@ -1,6 +1,5 @@
 const connection = require("../database.js");
 
-// Lista as consultas de um médico em um dia específico
 exports.listarConsultasPorMedicoDia = async (req, res) => {
     const { id_medico, id_dia } = req.params;
     try {
@@ -14,7 +13,6 @@ exports.listarConsultasPorMedicoDia = async (req, res) => {
     }
 };
 
-// Cria uma nova consulta (agendamento)
 exports.criarConsulta = async (req, res) => {
     const { id_medico, id_dia, hora_consulta, paciente, status, observacao } = req.body;
     
@@ -44,7 +42,6 @@ exports.criarConsulta = async (req, res) => {
     }
 };
 
-// Deleta uma consulta (agendamento)
 exports.deletarConsulta = async (req, res) => {
     const { id_consulta } = req.params;
     try {

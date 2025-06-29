@@ -6,7 +6,6 @@ export default function PopupAgendamentoSecretaria({ isOpen, onClose, onConfirm,
     const [nomePaciente, setNomePaciente] = useState('');
     const [observacoes, setObservacoes] = useState('');
 
-    // Preenche o formulário com os dados existentes quando o popup abre
     useEffect(() => {
         if (consulta) {
             setNomePaciente(consulta.paciente || '');
@@ -28,16 +27,11 @@ export default function PopupAgendamentoSecretaria({ isOpen, onClose, onConfirm,
     return (
         <AnimatePresence>
             {isOpen && (
-                // A MÁGICA ESTÁ NESTE DIV:
-                // fixed inset-0: Faz ele cobrir a tela inteira.
-                // bg-black bg-opacity-50: Cria o fundo preto semi-transparente.
-                // backdrop-blur-sm: Aplica o efeito de desfoque no conteúdo atrás dele.
-                // z-50: Garante que ele fique na frente de todo o resto.
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+                    className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4"
                 >
                     <motion.div
                         initial={{ scale: 0.9, y: -20 }}

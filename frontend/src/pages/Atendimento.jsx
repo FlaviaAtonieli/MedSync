@@ -1,4 +1,3 @@
-// CÓDIGO CORRIGIDO COM A IMPORTAÇÃO CERTA
 import { useState } from "react";
 import Header from "../components/header.jsx";
 import Footer from "../components/footer.jsx";

@@ -9,7 +9,6 @@ const Convenio = () => {
     return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
   };
 
-  // Dados dos planos do convênio
   const convenioPlans = [
     {
       title: "Oftalmologista",
@@ -48,7 +47,6 @@ const Convenio = () => {
     }
   ];
 
-  // Dados das especialidades
   const especialidades = [
     {
       categoria: "Pediatria",
@@ -91,7 +89,6 @@ const Convenio = () => {
     }
   ];
 
-  // Dados de como funciona o convênio
   const convenioInfo = {
     beneficios: [
       "Descontos em consultas e exames",
@@ -105,7 +102,6 @@ const Convenio = () => {
     ]
   };
 
-  // Dados das Perguntas Frequentes
   const faqItems = [
     {
       question: "Como faço para aderir ao convênio MedSync?",

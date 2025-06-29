@@ -11,6 +11,7 @@ const API_URL = 'http://localhost:3000';
 
 export const MedicalProvider = ({ children }) => {
     const [medicos, setMedicos] = useState([]);
+    const [artigos, setArtigos] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const getToken = () => localStorage.getItem('token');
@@ -19,49 +20,41 @@ export const MedicalProvider = ({ children }) => {
         setLoading(true);
         try {
             const token = getToken();
-            if (!token) {
-                setLoading(false);
-                return;
+            
+            const artigosResponse = await fetch(`${API_URL}/artigos`);
+            if (artigosResponse.ok) {
+                const artigosData = await artigosResponse.json();
+                setArtigos(artigosData);
+            } else {
+                 console.error("Falha ao buscar artigos.");
             }
 
-            const medicosResponse = await fetch(`${API_URL}/medicos`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!medicosResponse.ok) throw new Error("Falha ao buscar médicos.");
-            const medicosData = await medicosResponse.json();
+            if (token) {
+                const medicosResponse = await fetch(`${API_URL}/medicos`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!medicosResponse.ok) throw new Error("Falha ao buscar médicos.");
+                const medicosData = await medicosResponse.json();
+                
+                const medicosComTudo = await Promise.all(
+                    medicosData.map(async (medico) => {
+                        const diasResponse = await fetch(`${API_URL}/dias/${medico.id_medico}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        if (!diasResponse.ok) throw new Error(`Falha ao buscar dias para o médico ${medico.id_medico}`);
+                        const diasData = await diasResponse.json();
 
-            const medicosComTudo = await Promise.all(
-                medicosData.map(async (medico) => {
-                    const diasResponse = await fetch(`${API_URL}/dias/${medico.id_medico}`, { headers: { 'Authorization': `Bearer ${token}` } });
-                    if (!diasResponse.ok) throw new Error(`Falha ao buscar dias para o médico ${medico.id_medico}`);
-                    const diasData = await diasResponse.json();
-
-                    const diasAtendimentoFormatado = await Promise.all(
-                        diasData.map(async (dia) => {
-                            const consultasResponse = await fetch(`${API_URL}/consultas/medico/${medico.id_medico}/dia/${dia.id_dia}`, { headers: { 'Authorization': `Bearer ${token}` } });
-                            if (!consultasResponse.ok) throw new Error(`Falha ao buscar consultas para o dia ${dia.id_dia}`);
-                            const consultasData = await consultasResponse.json();
-                            
-                            const horarios = consultasData.map(c => ({ 
-                                id: c.id_consulta, 
-                                hora: c.hora_consulta, 
-                                paciente: c.paciente, 
-                                status: c.status, 
-                                observacao: c.observacao 
-                            }));
-
-                            return {
-                                id_dia: dia.id_dia,
-                                dia: dia.dia_semana,
-                                data: dia.data_atendimento,
-                                horarios: horarios
-                            };
-                        })
-                    );
-
-                    return { ...medico, id: medico.id_medico, diasAtendimento: diasAtendimentoFormatado };
-                })
-            );
-            
-            setMedicos(medicosComTudo);
+                        const diasAtendimentoFormatado = await Promise.all(
+                            diasData.map(async (dia) => {
+                                const consultasResponse = await fetch(`${API_URL}/consultas/medico/${medico.id_medico}/dia/${dia.id_dia}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                                if (!consultasResponse.ok) throw new Error(`Falha ao buscar consultas para o dia ${dia.id_dia}`);
+                                const consultasData = await consultasResponse.json();
+                                
+                                const horarios = consultasData.map(c => ({ id: c.id_consulta, hora: c.hora_consulta, paciente: c.paciente, status: c.status, observacao: c.observacao }));
+                                return { id_dia: dia.id_dia, dia: dia.dia_semana, data: dia.data_atendimento, horarios: horarios };
+                            })
+                        );
+                        return { ...medico, id: medico.id_medico, diasAtendimento: diasAtendimentoFormatado };
+                    })
+                );
+                setMedicos(medicosComTudo);
+            }
         } catch (error) { 
             console.error("Erro ao carregar dados:", error);
         } finally { 
@@ -95,9 +88,10 @@ export const MedicalProvider = ({ children }) => {
             throw error;
         }
     };
-
+    
     const value = {
         medicos,
+        artigos,
         loading,
         carregarDadosCompletos,
         addMedico: (data) => apiRequest('/medicos', 'POST', data),
@@ -108,6 +102,9 @@ export const MedicalProvider = ({ children }) => {
         agendarConsulta: (data) => apiRequest('/consultas', 'POST', data),
         deleteConsulta: (id) => apiRequest(`/consultas/${id}`, 'DELETE'),
         updateConsulta: (id, data) => apiRequest(`/consultas/${id}`, 'PUT', data),
+        addArtigo: (data) => apiRequest('/artigos', 'POST', data),
+        updateArtigo: (id, data) => apiRequest(`/artigos/${id}`, 'PUT', data),
+        deleteArtigo: (id) => apiRequest(`/artigos/${id}`, 'DELETE'),
     };
 
     return <MedicalContext.Provider value={value}>{children}</MedicalContext.Provider>;

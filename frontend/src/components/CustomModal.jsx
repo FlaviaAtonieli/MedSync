@@ -14,7 +14,6 @@ export default function CustomModal({
     return (
         <AnimatePresence>
             {isOpen && (
-                // A classe "backdrop-blur-sm" é a responsável pelo efeito de desfoque
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
