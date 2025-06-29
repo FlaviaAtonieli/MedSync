@@ -40,6 +40,8 @@ O projeto explora as seguintes tecnologias
 ✅ Confirmação de agendamento (redirecionamento para WhatsApp) <br>
 ✅ Acesso às informações do médico: agenda, especialização, CRM. <br>
 ✅ Acesso ao informativo (artigos e noticias) <br>
+✅ Criação do post do artigo e notícias <br>
+✅ Alteração e exclução de artigos e notícias <br>
 ✅ Detalhes sobre planos e convênio <br>
 ✅ Página com mais informações sobre a clínica/equipe 
 
